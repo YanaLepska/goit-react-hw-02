@@ -1,25 +1,48 @@
-import Profile from "./components/Profile/Profile";
-import FriendList from "./components/FriendList/FriendList";
-import TransactionHistory from "./components/TransactionHistory/TransactionHistory";
+import Description from "./components/Description/Description";
+import Feedback from "./components/Feedback/Feedback";
+import Options from "./components/Options/Options";
+import Notification from "./components/Notification/Notification";
+import { useState } from "react";
+import { useEffect } from "react";
 
-import userData from "./userData.json";
-import friends from "./friends.json";
-import transactions from "./transactions.json";
 
+const initialFeedbacks = { good: 0, neutral: 0, bad: 0 };
 const App = () => {
+  const [feedbacks, setFeedbacks] = useState(() => {
+    const stringifyFeedbacks = localStorage.getItem('feedbackRating');
+    const parsFeedbacks = JSON.parse(stringifyFeedbacks) ?? initialFeedbacks; 
+    return parsFeedbacks;
+  });
+ 
+  const updateFeedback = (feedbackType) => {
+    setFeedbacks({ ...feedbacks, [feedbackType]: feedbacks[feedbackType] + 1 });
+  };
+
+  const resetFeedbacks = () => {
+    setFeedbacks(initialFeedbacks);
+  }
+
+  const totalFeedback = feedbacks.good + feedbacks.neutral + feedbacks.bad;
+
+  const positiveMarks = Math.round(((feedbacks.good + feedbacks.neutral) / totalFeedback) * 100);
+  
+  useEffect(() => { 
+localStorage.setItem('feedbackRating', JSON.stringify(feedbacks))
+  }, [feedbacks])
+  
   return (
     <>
-      <Profile
-        name={userData.username}
-        tag={userData.tag}
-        location={userData.location}
-        image={userData.avatar}
-        stats={userData.stats}
-      />
-
-      <FriendList friends={friends} />
-      <TransactionHistory items={transactions} />
-    </>
+      <Description />
+      <Options
+        updateFeedback={updateFeedback}
+        resetFeedbacks={resetFeedbacks}
+        totalFeedback={totalFeedback} />
+      {totalFeedback > 0 ?
+        (<Feedback feedbacks={feedbacks}
+          totalFeedback={totalFeedback}
+        positiveMarks={positiveMarks} />)
+        : (<Notification />)}
+  </>
   );
 };
 

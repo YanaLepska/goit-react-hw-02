@@ -1,0 +1,12 @@
+.cafeName {
+  margin-bottom: 40px;
+  text-shadow: -5px 2px 11px rgba(10, 27, 37, 0.47);
+  color: #611f76;
+  font-family: "Great Vibes", cursive;
+  font-size: 40px;
+}
+
+.cafeDiscription {
+  line-height: 1.5;
+  letter-spacing: 0.32px;
+}
